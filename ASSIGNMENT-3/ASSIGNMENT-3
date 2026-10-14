@@ -1,1 +1,55 @@
+import sys
 
+
+def solve():
+    # Read all input from standard input efficiently
+    input_data = sys.stdin.read().split()
+    if not input_data:
+        return
+
+    iterator = iter(input_data)
+    n = int(next(iterator))
+    m = int(next(iterator))
+
+    INF = float('inf')
+    # Initialize the distance matrix with infinity
+    dist = [[INF] * (n + 1) for _ in range(n + 1)]
+
+    # Distance from a node to itself is always 0
+    for i in range(1, n + 1):
+        dist[i][i] = 0
+
+    # Read edges (the last edge between the same pair overwrites previous ones)
+    for _ in range(m):
+        u = int(next(iterator))
+        v = int(next(iterator))
+        w = int(next(iterator))
+        dist[u][v] = w
+
+    # Floyd-Warshall Algorithm for All-Pairs Shortest Path
+    for k in range(1, n + 1):
+        for i in range(1, n + 1):
+            if dist[i][k] == INF:
+                continue
+            for j in range(1, n + 1):
+                if dist[k][j] != INF and dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+
+    # Process queries
+    q = int(next(iterator))
+    out = []
+    for _ in range(q):
+        a = int(next(iterator))
+        b = int(next(iterator))
+        d = dist[a][b]
+        if d == INF:
+            out.append('-1')
+        else:
+            out.append(str(d))
+
+    # Print all query results
+    print('\n'.join(out))
+
+
+if __name__ == '__main__':
+    solve()
